@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>OPL Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- <link rel="stylesheet" href="https://openlayers.org/en/v4.6.5/css/ol.css" type="text/css">  <script src="main.js"></script> -->
+  <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
+    <script src="https://openlayers.org/en/v4.6.5/build/ol.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/proj4js/2.4.4/proj4.js"></script>
+</head>
+<body>
+  <div id="map"></div>
+
+  <script type="text/javascript">
+    var extent = [0, 0, 960, 500];
+    // var projection = ol.proj.get("EPSG:3857");
+    // var projection = ol.proj.get('EPSG:4326');
+    var projection = new ol.proj.Projection({
+        code: 'xkcd-image',
+        // code: 'EPSG:4326',
+        units: 'pixels',
+        extent: extent
+    });
+    var resolutions = [];
+    for(var i=0; i<19; i++){
+        resolutions[i] = Math.pow(2, 18-i);
+    }
+    var tilegrid  = new ol.tilegrid.TileGrid({
+        origin: [0,0],
+        resolutions: resolutions
+    });
+
+    // var baidu_source = new ol.source.TileImage({
+    //     projection: projection,
+    //     tileGrid: tilegrid,
+    //     tileUrlFunction: function(tileCoord, pixelRatio, proj){
+    //         if(!tileCoord){
+    //             return "";
+    //         }
+    //         var z = tileCoord[0];
+    //         var x = tileCoord[1];
+    //         var y = tileCoord[2];
+
+    //         if(x<0){
+    //             x = "M"+(-x);
+    //         }
+    //         if(y<0){
+    //             y = "M"+(-y);
+    //         }
+
+    //         // +"&styles=pl&udt=20151021&scaler=1&p=1"
+    //         return "http://online3.map.bdimg.com/onlinelabel/?qt=tile&x="+x+"&y="+y+"&z="+z;
+    //         // return "http://api.map.baidu.com/staticimage/v2?ak=CeFVFZbQp18Na3pdXkObLTGGSLG2dhxS&center=116.403874,39.914888&width=300&height=200&zoom=16";
+    //     }
+    // });
+
+    var baidu_layer = new ol.layer.Tile({
+        source: new ol.source.OSM()
+    });
+
+    var map = new ol.Map({
+        target: 'map',
+        layers: [
+            // baidu_layer,
+            /* new ol.layer.Tile({
+                source: new ol.source.TileImage({
+                    // projection: projection,
+                    // tileGrid: tilegrid,
+                    // tileUrlFunction: function (tileCoord, pixelRatio, proj) {
+                    //     var z = zeroPad(tileCoord[0], 2, 10);
+                    //     var x = zeroPad(tileCoord[1], 8, 16);
+                    //     var y = zeroPad(-tileCoord[2] - 1, 8, 16);
+                    //     // return "TestMapTile/" + "L" + z + "/" + "R" + y + "/" + "C" + x + ".png";
+                    //     return "./static/building-site.jpg";
+                    // }
+                    projection: projection,
+                    tileGrid: tilegrid,
+                    tileUrlFunction: function(tileCoord, pixelRatio, proj){
+                        if(!tileCoord){
+                            return "";
+                        }
+                        var z = tileCoord[0];
+                        var x = tileCoord[1];
+                        var y = tileCoord[2];
+
+                        if(x<0){
+                            x = "M"+(-x);
+                        }
+                        if(y<0){
+                            y = "M"+(-y);
+                        }
+
+                        // +"&styles=pl&udt=20151021&scaler=1&p=1"
+                        // return "http://online3.map.bdimg.com/onlinelabel/?qt=tile&x="+x+"&y="+y+"&z="+z;
+                        return "http://api.map.baidu.com/staticimage/v2?ak=CeFVFZbQp18Na3pdXkObLTGGSLG2dhxS&center=116.403874,39.914888&width=300&height=200&zoom=16";
+                    }
+                }),
+            }), */
+            new ol.layer.Image({
+                source: new ol.source.ImageStatic({
+                    url: './static/building-site.jpg',
+                    projection: projection,
+                    imageExtent: extent
+                })
+            })
+        ],
+        view: new ol.View({
+            // center:  [12959773, 4853101],
+            center: ol.extent.getCenter(extent),
+            // center: ol.proj.transform(ol.extent.getCenter(extent), 'EPSG:4326'),
+            zoom: 2,
+            maxZoom: 8
+        })
+    });
+    // var map = new ol.Map({
+    //     layers: [
+    //       new ol.layer.Image({
+    //         source: new ol.source.ImageStatic({
+    //           url: './static/building-site.jpg',  // 这里添加静态图片的地址
+    //           projection: projection,
+    //           imageExtent: extent
+    //         })
+    //       })
+    //     ],
+    //     target: 'map',
+    //     view: new ol.View({
+    //       projection: projection,
+    //       center: ol.extent.getCenter(extent),
+    //     //   center:  [12959773, 4853101],
+    //       zoom: 2,
+    //       maxZoom: 8
+    //     })
+    // });
+</script>
+</body>
+</html>
