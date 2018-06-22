@@ -1,0 +1,88 @@
+<!doctype html>  
+<html>  
+<head>  
+    <title>Simple Select</title>  
+    <link rel="stylesheet" href="https://openlayers.org/en/v4.6.4/css/ol.css" type="text/css">  
+    <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->  
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>  
+    <script src="https://openlayers.org/en/v4.6.4/build/ol.js"></script>  
+</head>  
+<body>  
+<input type="button" onclick="DeleteFeature()" value="删除">  
+<div id="map" class="map"></div>  
+<script>  
+    var image = new ol.style.Circle({  
+        radius: 5,  
+        fill: null,  
+        stroke: new ol.style.Stroke({color: 'red', width: 1})  
+    });  
+  
+    var styles ={  
+        'Point': new ol.style.Style({  
+            image: image  
+        })  
+    };  
+  
+    var styleFunction = function(feature) {  
+        return styles[feature.getGeometry().getType()];  
+    };  
+  
+    var VectorSource = new ol.source.Vector({WrapX:false});  
+  
+    var VectotLayer = new ol.layer.Vector({  
+        id:'eur',  
+        source:VectorSource,  
+        style: styleFunction  
+    });  
+  
+  
+    var map = new ol.Map({  
+        layers: [  
+            new ol.layer.Tile({  
+                source: new ol.source.OSM()  
+            }),VectotLayer  
+  
+        ],  
+        target: 'map',  
+        view: new ol.View({  
+            center: [0, 0],  
+            zoom: 2  
+        })  
+    });  
+  
+    var DrawFeature = new ol.Feature({  
+        geometry: new ol.geom.Point([0,0])  
+    });  
+    VectorSource.addFeature(DrawFeature);  
+  
+    var selectFeature;  
+    map.on('click',function (evt) {  
+        var feature = map.forEachFeatureAtPixel(evt.pixel,  
+            function (feature) {  
+                return feature;  
+            },{  
+                layerFilter: function (layer) {  
+                    return layer.get('id') === 'eur';  
+                }  
+            }  
+        );  
+        if(feature){  
+            selectFeature = feature;  
+            selectFeature.setStyle(new ol.style.Style({  
+                image:new ol.style.Circle({  
+                    radius:10,  
+                    stroke:new ol.style.Stroke({  
+                        color:'blue',  
+                        width:4  
+                    })  
+                })  
+            }));  
+        }  
+    });  
+  
+    function DeleteFeature() {  
+        VectotLayer.getSource().removeFeature(selectFeature);  
+    }  
+</script>  
+</body>  
+</html> 
