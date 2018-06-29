@@ -6,10 +6,18 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>Final</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <link rel="stylesheet" href="https://openlayers.org/en/v4.6.5/css/ol.css" type="text/css">
+  <link rel="stylesheet" type="text/css" href="./static/afont/css/font-awesome.css" />
+  <!-- <link rel="stylesheet" type="text/css" href="./static/icon/iconfont.css" /> -->
   <!-- The line below is only needed for old environments like Internet Explorer and Android 4.x -->
   <script src="https://cdn.polyfill.io/v2/polyfill.min.js?features=requestAnimationFrame,Element.prototype.classList,URL"></script>
   <script src="https://openlayers.org/en/v4.6.5/build/ol.js"></script>
+  <!-- OL-ext -->
+  <!-- <link rel="stylesheet" href="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.min.css" /> -->
+  <!-- <link rel="stylesheet" href="./node_modules/openlayers-ext/dist/ol-ext.css" /> -->
+  <!-- <script type="text/javascript" src="https://cdn.rawgit.com/Viglino/ol-ext/master/dist/ol-ext.min.js"></script> -->
+  <!-- <script type="text/javascript" src="./node_modules/openlayers-ext/dist/ol-ext.js"></script> -->
 </head>
 
 <style>
@@ -47,24 +55,24 @@
   }
 </style>
 
-<body>
+<body class="iconfont">
 
   <form class="form-inline">
     <label>Geometry type &nbsp;</label>
     <select id="type">
-      <option value="Point">Point</option>
+      <!-- <option value="Point">Point</option> -->
       <option value="Polygon">Polygon</option>
       <!-- <option value="Circle">Circle</option> -->
       <option value="None" selected>None</option>
     </select>
     <input id="outputPoints" type="button" onclick="outPut()" value="输出点" />
-    <input id="deleteFeature" type="button" onclick="deleteAll()" value="清空图层" >
+    <input id="deleteFeature" type="button" onclick="deleteAll()" value="清空图层">
   </form>
   <div id="map1" class="map"></div>
   <!-- <div id="map2" class="map"></div> -->
 
   <script>
-    var originGeoJSON = {"type":"FeatureCollection","features":[{"type":"Feature","geometry":{"type":"Point","coordinates":[120.21500945091248,30.21041750907898]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[120.21410822868347,30.20915150642395]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[120.21698355674744,30.210031270980835]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[120.21597504615784,30.2129065990448]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[120.21453738212585,30.212305784225464]}},{"type":"Feature","geometry":{"type":"Polygon","coordinates":[[[120.2185446023941,30.21340548992157],[120.21675288677216,30.21241843700409],[120.21815836429596,30.211216807365417],[120.21985352039337,30.21139919757843],[120.21996080875397,30.212697386741638],[120.21986424922943,30.213308930397034],[120.2185446023941,30.21340548992157]]]}}]}
+    var originGeoJSON = { "type": "FeatureCollection", "features": [{ "type": "Feature", "geometry": { "type": "Point", "coordinates": [120.21500945091248, 30.21041750907898] } }, { "type": "Feature", "geometry": { "type": "Point", "coordinates": [120.21410822868347, 30.20915150642395] } }, { "type": "Feature", "geometry": { "type": "Point", "coordinates": [120.21698355674744, 30.210031270980835] } }, { "type": "Feature", "geometry": { "type": "Point", "coordinates": [120.21597504615784, 30.2129065990448] } }, { "type": "Feature", "geometry": { "type": "Point", "coordinates": [120.21453738212585, 30.212305784225464] } }, { "type": "Feature", "geometry": { "type": "Polygon", "coordinates": [[[120.2185446023941, 30.21340548992157], [120.21675288677216, 30.21241843700409], [120.21815836429596, 30.211216807365417], [120.21985352039337, 30.21139919757843], [120.21996080875397, 30.212697386741638], [120.21986424922943, 30.213308930397034], [120.2185446023941, 30.21340548992157]]] } }] }
     // 右上 左下
     var extent = [120.220524, 30.214435, 120.212713, 30.207322];
     var projection = new ol.proj.Projection({
@@ -76,33 +84,21 @@
 
     var source = new ol.source.Vector({
       wrapX: false,
-      features: (new ol.format.GeoJSON({featureProjection: 'EPSG:4326'})).readFeatures(originGeoJSON)
+      features: (new ol.format.GeoJSON({ featureProjection: 'EPSG:4326' })).readFeatures(originGeoJSON)
       // features: new ol.format.GeoJSON(),
     });
-    // source.addFeature(new ol.Feature(new ol.geom.Circle([5e6, 7e6], 1e6)));
 
     var vector = new ol.layer.Vector({
       source: source,
-      style: new ol.style.Style({
+      /* style: new ol.style.Style({
         fill: new ol.style.Fill({
           color: 'rgba(255, 99, 71, 0.3)'
         }),
         stroke: new ol.style.Stroke({
           color: 'tomato',
           width: 2
-        }),
-        image: new ol.style.Circle({
-          radius: 7,
-          fill: new ol.style.Fill({
-            color: 'tomato'
-          })
-        }),
-        // geometry: function(feature) {
-        //   // return the coordinates of the first ring of the polygon
-        //   var coordinates = feature.getGeometry().getCoordinates()[0];
-        //   return new ol.geom.MultiPoint(coordinates);
-        // }
-      })
+        })
+      }) */
     });
 
     var view = new ol.View({
@@ -138,10 +134,63 @@
       view: view
     });
 
-    var modify = new ol.interaction.Modify({ source: source });
+    var selectClick = new ol.interaction.Select({
+      condition: ol.events.condition.click,
+      /* style: new ol.style.Style({
+        fill: new ol.style.Fill({
+          color: '#000'
+        }),
+        stroke: new ol.style.Stroke({
+          color: 'tomato',
+          width: 12
+        })
+      }) */
+    });
+
+    /* map.addInteraction(selectClick);
+    selectClick.on("select", ClickEvent);
+    function ClickEvent(e) {
+      var arr = e.target;  //获取事件对象，即产生这个事件的元素-->ol.interaction.Select  
+      var collection = arr.getFeatures();  //获取这个事件绑定的features-->返回值是一个ol.Collection对象  
+
+      var features = collection.getArray();  //获取这个集合的第一个元素-->真正的feature  
+      if (features.length > 0) {
+        alert('2333333')
+      }
+    } */
+
+    // map.on('click', function (evt) {
+    //   var feature = map.forEachFeatureAtPixel(evt.pixel,
+    //     function (feature) {
+    //       return feature;
+    //     }, {
+    //       layerFilter: function (layer) {
+    //         console.log(layer)
+    //         return layer.get('id') === 'eur';
+    //       }
+    //     }
+    //   );
+    //   if (feature) {
+    //     selectFeature = feature;
+    //     selectFeature.setStyle(new ol.style.Style({
+    //       fill: new ol.style.Fill({
+    //         color: '#000'
+    //       }),
+    //       stroke: new ol.style.Stroke({
+    //         color: 'tomato',
+    //         width: 12
+    //       })
+    //     }));
+    //   }
+    // });
+
+    var modify = new ol.interaction.Modify({
+      source: source,
+      features: selectClick.getFeatures()
+    });
     map.addInteraction(modify);
 
-    var draw, snap;  // global so we can remove them later
+    var draw;  // global so we can remove them later
     // var colorSet = ['#1fca04','#cf5a34','#adda5f'];
     var typeSelect = document.getElementById('type');
     function addInteractions() {
@@ -157,20 +206,25 @@
             stroke: new ol.style.Stroke({
               color: 'tomato',
               width: 2
-            }),
+            })/* ,
             image: new ol.style.Circle({
               radius: 7,
               fill: new ol.style.Fill({
                 color: 'tomato'
-              })
+              }),
+              stroke: new ol.style.Stroke({
+              color: 'tomato',
+              width: 2
             })
+              
+            }) */
           })
         });
         map.addInteraction(draw);
 
       }
-      snap = new ol.interaction.Snap({ source: source });
-      map.addInteraction(snap);
+      // snap = new ol.interaction.Snap({ source: source });
+      // map.addInteraction(snap);
     }
 
     /**
@@ -178,7 +232,6 @@
     */
     typeSelect.onchange = function () {
       map.removeInteraction(draw);
-      map.removeInteraction(snap);
       addInteractions();
     };
 
@@ -192,20 +245,14 @@
           var id = properties.id;
           //if (id == selectedFeatureID) {
           source.removeFeature(features[x]);
-                //}
-            }
+          //}
         }
+      }
     }
     function outPut() {
       // console.log(draw);
       var GeojsonObj = {
         'type': 'FeatureCollection'
-        // 'crs': {
-        //   'type': 'name',
-        //   'properties': {
-        //     'name': 'EPSG: 4326'
-        //   }
-        // }
       }
       var newFetList = []
       var features = source.getFeatures();
@@ -221,6 +268,7 @@
             // [[geom.getFirstCoordinate(), geom.getLastCoordinate()]]
             var geoCoordinates = geomType === 'Circle' ? geom.getCenter() : geom.getCoordinates();  // geometry.coordinates
 
+            // features[x].setGeometryName('')
             // switch (geomType) {
             //   case 'Polygon':
             //     features[x].setGeometryName('danger')
